@@ -1,6 +1,105 @@
 <!DOCTYPE html>
 <body>
     <h1>Using OpenDota API to create meaningful data</h1>
-    <a href ="/new-data">Click here to crunch some numbers!</a>
 
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <form id="special-form">
+          <legend>New Query</legend>
+          <div class="form-group">
+              <label for="post-player">Player ID</label>
+              <input name="player_id" type="text" class="form-control" id="post-player" value="84155330">
+          </div>
+          <div class="form-group">
+            <label for="post-hero">Hero ID</label>
+            <input type="text" name="hero_id" class="form-control" id="post-hero" value="98">
+          </div>
+          <div class="form-group">
+            <label for="post-item">Item Name</label>
+            <input type="text" name="item_name" class="form-control" id="post-item" value="soul_ring">
+          </div>
+          <div class='text-right'>
+            <button type="submit" class="btn btn-primary">Submit Query</button>
+          </div>
+        </form>
+      </div>
+    </div>
+	<img class="steam-image"></img>
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+    (() => {
+        // This section gets the data from your original form
+        // define some form elements
+        const form = document.getElementById('special-form')
+        const postPlayer = document.getElementById('post-player')
+        const postHero = document.getElementById('post-hero')
+        const postItem = document.getElementById('post-item')
+        // Handle form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault() // Prevent refresh
+            // define some options for the request
+            const options = {
+                method: 'post',                  // method is post
+                body: JSON.stringify({           // define the data sent to the server
+                    player_id: postPlayer.value, // These value come from the form
+                    hero_id: postHero.value,
+                    item_name: postItem.value
+                }),
+                headers: {
+                    'Accept': 'application/json',       // Need this to make sure the
+                    'Content-Type': 'application/json'  // data travels correctly
+                }
+            }
+            // Lets look at the request before we send it
+            console.log('Sending Data:')
+            console.log(options)
+            // Make a JS request to a route with the options above
+            fetch('./new-data-api', options).then((res) => {
+                return res.json()
+            }).then((json) => {
+                // handle json data returned from the server
+                console.log('=======================')
+                console.log(json)
+                // Deal with JSON here!!!!!!
+                let labelsToMake = json.matchData.length-1;
+                labels = [];
+                labels.push("did not get item")
+                for(let i = 0;i<labelsToMake;i++){
+                    let timeLow = i * 10;
+                    let timeHigh = i * 10 + 9;
+                    labels.push(timeLow + " to " + timeHigh);
+                }
+                data = [];
+                for(let i =0; i<labelsToMake;i++){
+                    data.push(json.matchData[i].wins/(json.matchData[i].wins+json.matchData[i].loses));
+                }
+                var ctx = document.getElementById("myChart");
+                var myChart = new Chart (ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Time to get Item/Win rate',
+                            data: data,
+                            borderWidth: 5
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero:true
+                                }
+                            }]
+                        }
+                    }
+                });
+            }).catch((err) => {
+                console.log('-- Error --')
+                console.log(err.message)
+            })
+        })
+    })()
+    </script>
 </body>
