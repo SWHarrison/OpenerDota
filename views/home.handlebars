@@ -68,7 +68,8 @@
                 for(let i = 0;i<labelsToMake;i++){
                     let timeLow = i * 20;
                     let timeHigh = i * 20 + 19;
-                    labels.push(timeLow + " to " + timeHigh);
+                    let minutes = Math.floor(timeLow/60)
+                    labels.push(minutes + ":" + (timeLow%60) + "-" + minutes + ":" + (timeHigh%60));
                 }
                 wins = [];
                 totals = [];
@@ -76,12 +77,30 @@
                     wins.push(json.matchData[i].wins);
                     totals.push(json.matchData[i].wins+json.matchData[i].loses)
                 }
-
-                /*let flag = true;
-                let i = 0;
+                console.log("wins");
+                console.log(wins);
+                console.log("totals");
+                console.log(totals);
+                let flag = true;
+                let i = 1;
                 while(flag){
-                    if(totals[i] === 0)
-                }*/
+                    if(totals[i] === 0){
+                        labels.splice(i,1);
+                        wins.splice(i,1);
+                        totals.splice(i,1);
+                        console.log("wins");
+                        console.log(wins);
+                        console.log("totals");
+                        console.log(totals);
+                    } else {
+                        flag = false;
+                    }
+                }
+                console.log("over")
+                console.log("wins");
+                console.log(wins);
+                console.log("totals");
+                console.log(totals);
                 var ctx = document.getElementById("myChart");
                 var myChart = new Chart (ctx, {
                     type: 'bar',
