@@ -100,6 +100,7 @@ module.exports = app => {
         let matchIDs = [];
         let matchItemTime = [];
         let matchWin = [];
+        let timeInterval = 20
 
         // Collect data send from the browser
         let player = req.body.player_id;
@@ -113,7 +114,7 @@ module.exports = app => {
         requestMatchesHero(player,hero_id,15,item_name).then(data => {
             console.log(matchItemTime);
             console.log(matchWin);
-            let max = [Math.max(...matchItemTime)/10]
+            let max = [Math.max(...matchItemTime)/timeInterval]
             let matchData = [];
             for(let i = 0; i<max; i++){
                 matchData.push({
@@ -123,9 +124,9 @@ module.exports = app => {
             }
             for(let index = 0; index<matchItemTime.length; index++){
                 if(matchWin[index] == 1){
-                    matchData[Math.floor(matchItemTime[index]/10)].wins += 1;
+                    matchData[Math.floor(matchItemTime[index]/timeInterval)].wins += 1;
                 } else {
-                    matchData[Math.floor(matchItemTime[index]/10)].loses += 1;
+                    matchData[Math.floor(matchItemTime[index]/timeInterval)].loses += 1;
                 }
             }
             // Return the data to the browser.

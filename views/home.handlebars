@@ -62,17 +62,19 @@
                 console.log('=======================')
                 console.log(json)
                 // Deal with JSON here!!!!!!
-                let labelsToMake = json.matchData.length-1;
+                let labelsToMake = json.matchData.length;
                 labels = [];
-                labels.push("did not get item")
+                labels.push("no item")
                 for(let i = 0;i<labelsToMake;i++){
-                    let timeLow = i * 10;
-                    let timeHigh = i * 10 + 9;
+                    let timeLow = i * 20;
+                    let timeHigh = i * 20 + 19;
                     labels.push(timeLow + " to " + timeHigh);
                 }
-                data = [];
+                wins = [];
+                totals = [];
                 for(let i =0; i<labelsToMake;i++){
-                    data.push(json.matchData[i].wins/(json.matchData[i].wins+json.matchData[i].loses));
+                    wins.push(json.matchData[i].wins);
+                    totals.push(json.matchData[i].wins+json.matchData[i].loses)
                 }
                 var ctx = document.getElementById("myChart");
                 var myChart = new Chart (ctx, {
@@ -80,8 +82,15 @@
                     data: {
                         labels: labels,
                         datasets: [{
-                            label: 'Time to get Item/Win rate',
-                            data: data,
+                            label: 'Wins',
+                            data: wins,
+                            backgroundColor : "blue",
+                            borderWidth: 5
+                        },
+                        {
+                            label: 'Total Games',
+                            data: totals,
+                            backgroundColor : "red",
                             borderWidth: 5
                         }]
                     },
