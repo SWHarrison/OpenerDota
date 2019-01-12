@@ -76,6 +76,12 @@
                     wins.push(json.matchData[i].wins);
                     totals.push(json.matchData[i].wins+json.matchData[i].loses)
                 }
+
+                /*let flag = true;
+                let i = 0;
+                while(flag){
+                    if(totals[i] === 0)
+                }*/
                 var ctx = document.getElementById("myChart");
                 var myChart = new Chart (ctx, {
                     type: 'bar',

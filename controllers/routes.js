@@ -111,7 +111,7 @@ module.exports = app => {
         console.log(player, hero_id, item_name)
         console.log(req.body)
 
-        requestMatchesHero(player,hero_id,15,item_name).then(data => {
+        requestMatchesHero(player,hero_id,item_name).then(data => {
             console.log(matchItemTime);
             console.log(matchWin);
             let max = [Math.max(...matchItemTime)/timeInterval]
@@ -141,8 +141,8 @@ module.exports = app => {
             });
         }
 
-        function requestMatchesHero(id, hero_id, days, item) {
-            var url = 'https://api.opendota.com/api/players/' + id + '/matches?hero_id=' + hero_id +'&date=' + days;
+        function requestMatchesHero(id, hero_id, item) {
+            var url = 'https://api.opendota.com/api/players/' + id + '/matches?hero_id=' + hero_id +'&limit=23';
             return axios.get(url).then(function(responseData){
                 for(let i = 0; i <responseData.data.length; i++){
                     matchIDs.push(responseData.data[i].match_id);
