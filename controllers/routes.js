@@ -110,7 +110,7 @@ module.exports = app => {
         console.log(player, hero_id, item_name)
         console.log(req.body)
 
-        requestMatchesHero(player,hero_id,30,item_name).then(data => {
+        requestMatchesHero(player,hero_id,15,item_name).then(data => {
             console.log(matchItemTime);
             console.log(matchWin);
             let max = [Math.max(...matchItemTime)/10]
