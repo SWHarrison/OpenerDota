@@ -1,10 +1,12 @@
-/*require('dotenv').config();
-var mongoose = require('mongoose');*/
+//https://www.makeschool.com/academy/track/reddit-clone-in-node-js/tutorial/sign-up-and-login
+
+require('dotenv').config();
+var mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
-/*const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 var cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken');*/
+const jwt = require('jsonwebtoken');
 
 const express = require('express')
 const app = express()
@@ -12,10 +14,12 @@ const app = express()
 // Use Body Parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(cookieParser());
+app.use(cookieParser());
 
 // Add after body parser initialization!
 app.use(expressValidator());
+
+require('./data/dota-db');
 
 const route = require('./controllers/routes.js');
 
@@ -26,7 +30,7 @@ app.set('view engine', 'handlebars');
 
 module.exports = app
 
-/*var checkAuth = (req, res, next) => {
+var checkAuth = (req, res, next) => {
   console.log("Checking authentication");
   if (typeof req.cookies.nToken === "undefined" || req.cookies.nToken === null) {
     req.user = null;
@@ -37,9 +41,9 @@ module.exports = app
   }
 
   next();
-};*/
+};
 
-//app.use(checkAuth);
+app.use(checkAuth);
 
 route(app)
 

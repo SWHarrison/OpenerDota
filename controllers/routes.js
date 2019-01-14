@@ -1,98 +1,85 @@
+const jwt = require('jsonwebtoken');
+const User = require("../models/user");
+
 module.exports = app => {
 
+    //Home Page
     app.get('/', (req, res) => {
-        //var currentUser = req.user;
-        //console.log(req.user)
-        res.render("home.handlebars");
+        var currentUser = req.user;
+        console.log(currentUser.playerID)
+        res.render("home.handlebars", { currentUser });
     });
 
-    app.get('/new-data', (req, res) =>{
+    /*app.get('/new-data', (req, res) =>{
         res.render("new-data.handlebars")
-    })
+    })*/
 
-    /*app.post('/new-data', (req, res) => {
+    // SIGN UP FORM
+    app.get("/sign-up", (req, res) => {
+        res.render("sign-up.handlebars");
+    });
 
-        var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-        const axios = require('axios');
-        let matchIDs = [];
-        let matchItemTime = [];
-        let matchWin = [];
+    // SIGN UP POST
+    app.post("/sign-up", (req, res) => {
+    // Create User and JWT
+        const user = new User(req.body);
 
-        let player = req.body.player_id;
-        let hero_id = req.body.hero_id;
-        let item_name = req.body.item_name;
-
-        requestMatchesHero(player,hero_id,8,item_name).then(data => {
-            console.log(matchItemTime);
-            console.log(matchWin);
-            let max = [Math.max(...matchItemTime)/10]
-            let matchData = [];
-            for(let i = 0; i<max; i++){
-                matchData.push({
-                    "wins": 0,
-                    "loses": 0
-                })
-            }
-            for(let index = 0; index<matchItemTime.length; index++){
-                if(matchWin[index] == 1){
-                    matchData[Math.floor(matchItemTime[index]/10)].wins += 1;
-                } else {
-                    matchData[Math.floor(matchItemTime[index]/10)].loses += 1;
-                }
-            }
-            res.render('new-graph', { matchData });
+        user.save().then((user) => {
+            var token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "60 days" });
+            res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });
+            res.redirect('/');
+        })
+        .catch(err => {
+            console.log(err.message);
+            return res.status(400).send({ err: err });
         });
+    });
 
-        function request_player(id) {
-            var url = 'https://api.opendota.com/api/players/' + id;
-            axios.get(url).then(function(responseData){
-                console.log(responseData.data.profile.personaname);
-                player = responseData.data;
-            });
-        }
+    // LOGOUT
+    app.get('/logout', (req, res) => {
+        res.clearCookie('nToken');
+        res.redirect('/');
+    });
 
-        function requestMatchesHero(id, hero_id, days, item) {
-            var url = 'https://api.opendota.com/api/players/' + id + '/matches?hero_id=' + hero_id +'&date=' + days;
-            return axios.get(url).then(function(responseData){
-                for(let i = 0; i <responseData.data.length; i++){
-                    matchIDs.push(responseData.data[i].match_id);
-                    let matchData = requestMatch(responseData.data[i].match_id);
-                    let index = -999;
+    // LOGIN FORM
+    app.get('/login', (req, res) => {
+        res.render('login');
+    });
 
-                    for(let playerSlot = 0; playerSlot < 10; playerSlot++){
-                        if(matchData.players[playerSlot].account_id == id){
-                            index = playerSlot;
-                            break;
-                        }
-                    }
-
-                    let firstPurchases = matchData.players[index].first_purchase_time;
-                    if(firstPurchases[item]){
-                        matchItemTime.push(firstPurchases[item]);
-                    } else {
-                        matchItemTime.push(0);
-                    }
-                    matchWin.push(matchData.players[index].win);
+    // LOGIN
+    app.post("/login", (req, res) => {
+        const username = req.body.username;
+        const password = req.body.password;
+        // Find this user name
+        User.findOne({ username }, "username password")
+            .then(user => {
+                if (!user) {
+                    // User not found
+                    return res.status(401).send({ message: "Wrong Username or Password" });
                 }
-                return;
+                // Check the password
+                user.comparePassword(password, (err, isMatch) => {
+                    if (!isMatch) {
+                        // Password does not match
+                        return res.status(401).send({ message: "Wrong Username or password" });
+                    }
+                    // Create a token
+                    const token = jwt.sign({ _id: user._id, username: user.username }, process.env.SECRET, {
+                        expiresIn: "60 days"
+                    });
+                    // Set a cookie and redirect to root
+                    res.cookie("nToken", token, { maxAge: 900000, httpOnly: true });
+                    res.redirect("/");
+                });
             })
-
-        }
-
-        function requestMatch(id){
-            var url = 'https://api.opendota.com/api/matches/' + id;
-            var http_request = new XMLHttpRequest();
-            http_request.open("GET", url, false);
-            http_request.responseType = "json";
-            http_request.send();
-            var raw = JSON.parse(http_request.responseText);
-            return raw;
-        }
-    });*/
+            .catch(err => {
+                console.log(err);
+            });
+    });
 
     // ==============================================================
     // Handle requests with JS
-
+    // Sends data after request of relevant match data
     app.post('/new-data-api', (req, res) => {
 
         var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -102,15 +89,15 @@ module.exports = app => {
         let matchWin = [];
         let timeInterval = 20
 
-        // Collect data send from the browser
+        // Collect data to send from the browser
         let player = req.body.player_id;
         let hero_id = req.body.hero_id;
         let item_name = req.body.item_name;
-        // Lets take a look at this before we work with it.
+        // Check parameters
         console.log('Recieving Data:')
         console.log(player, hero_id, item_name)
         console.log(req.body)
-
+        //Gets matches of a specfic hero
         requestMatchesHero(player,hero_id,item_name).then(data => {
             console.log(matchItemTime);
             console.log(matchWin);
