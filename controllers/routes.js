@@ -116,7 +116,7 @@ module.exports = app => {
             console.log(matchWin);
             let max = [Math.max(...matchItemTime)/timeInterval]
             let matchData = [];
-            for(let i = 0; i<max; i++){
+            for(let i = 0; i<max+1; i++){
                 matchData.push({
                     "wins": 0,
                     "loses": 0
@@ -124,9 +124,9 @@ module.exports = app => {
             }
             for(let index = 0; index<matchItemTime.length; index++){
                 if(matchWin[index] == 1){
-                    matchData[Math.floor(matchItemTime[index]/timeInterval)].wins += 1;
+                    matchData[Math.floor(matchItemTime[index]/timeInterval)+1].wins += 1;
                 } else {
-                    matchData[Math.floor(matchItemTime[index]/timeInterval)].loses += 1;
+                    matchData[Math.floor(matchItemTime[index]/timeInterval)+1].loses += 1;
                 }
             }
             // Return the data to the browser.
@@ -159,9 +159,6 @@ module.exports = app => {
 
                     let firstPurchases = matchData.players[index].first_purchase_time;
                     console.log(firstPurchases)
-                    if(!firstPurchases){
-                        return;
-                    }
                     if(firstPurchases[item]){
                         matchItemTime.push(firstPurchases[item]);
                     } else {
