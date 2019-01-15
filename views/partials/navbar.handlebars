@@ -1,6 +1,6 @@
 <!-- views/partials/navbar.handlebars -->
 
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" style="display: flex; flex-direction: row; justify-content: space-between;">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="/">
@@ -10,13 +10,33 @@
     </div>
 
     <div class="container">
-        <ul class="nav navbar-nav navbar-right">
+        <div class="nav navbar-nav navbar-right" style="justify-content: flex-end;">
           {{#if currentUser}}
-            <li><a href="/logout">Logout</a></li>
-            <li>Signed-in as {{currentUser.username}}<li>
+            <div><a href="/logout">Logout</a></div>
+            <div>Signed-in as {{currentUser.username}}<div>
+            <!--<script>
+            (() => {
+
+                const options = {
+                    method: 'post',                  // method is post
+                    body: JSON.stringify({           // define the data sent to the server
+                        player_id: {{currentUser.playerID}}
+                    }),
+                    headers: {
+                        'Accept': 'application/json',       // Need this to make sure the
+                        'Content-Type': 'application/json'  // data travels correctly
+                    }
+                }
+                fetch('../player-api', options).then((res) => {
+                    return res.json()
+                }).then((json) => {
+                    console.log(json)
+                })
+            })()
+        </script>-->
           {{else}}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/sign-up">Sign Up</a></li>
+            <div><a href="/login">Login</a></div>
+            <div><a href="/sign-up">Sign Up</a></div>
           {{/if}}
         </ul>
     </div>

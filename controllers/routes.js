@@ -6,7 +6,7 @@ module.exports = app => {
     //Home Page
     app.get('/', (req, res) => {
         var currentUser = req.user;
-        console.log(currentUser)
+        //console.log(currentUser)
         res.render("home.handlebars", { currentUser });
     });
 
@@ -82,6 +82,15 @@ module.exports = app => {
     // ==============================================================
     // Handle requests with JS
     // Sends data after request of relevant match data
+    app.post('/player-api'), (req, res) => {
+        const axios = require('axios');
+        var url = 'https://api.opendota.com/api/players/' + req.body.player_id;
+        axios.get(url).then(function(responseData){
+            console.log(responseData)
+            res.json({responseData})
+        });
+    }
+
     app.post('/new-data-api', (req, res) => {
 
         var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
@@ -101,11 +110,9 @@ module.exports = app => {
         console.log(req.body)
         //Gets matches of a specfic hero
         requestMatchesHero(player,hero_id,item_name).then(data => {
-            console.log(matchItemTime);
-            console.log(matchWin);
+            //console.log(matchItemTime);
+            //console.log(matchWin);
             let max = Math.max(...matchItemTime)/timeInterval
-            console.log("max")
-            console.log(max+2)
             let matchData = [];
             for(let i = 0; i<max+1; i++){
                 matchData.push({
@@ -113,27 +120,16 @@ module.exports = app => {
                     "loses": 0
                 })
             }
-            console.log(matchData.length)
-            console.log(matchData)
             for(let index = 0; index<matchItemTime.length; index++){
                 if(matchWin[index] == 1){
                     matchData[Math.floor(matchItemTime[index]/timeInterval)+1].wins += 1;
                 } else {
-                    console.log((matchItemTime[index]/timeInterval)+1)
                     matchData[Math.floor(matchItemTime[index]/timeInterval)+1].loses += 1;
                 }
             }
             // Return the data to the browser.
             res.json({ matchData });
         });
-
-        function request_player(id) {
-            var url = 'https://api.opendota.com/api/players/' + id;
-            axios.get(url).then(function(responseData){
-                console.log(responseData.data.profile.personaname);
-                player = responseData.data;
-            });
-        }
 
         function requestMatchesHero(id, hero_id, item) {
             var url = 'https://api.opendota.com/api/players/' + id + '/matches?hero_id=' + hero_id +'&limit=23';
