@@ -51,7 +51,7 @@ module.exports = app => {
         const username = req.body.username;
         const password = req.body.password;
         // Find this user name
-        User.findOne({ username }, "username password")
+        User.findOne({ username }, "username password playerID")
             .then(user => {
                 if (!user) {
                     // User not found
@@ -65,7 +65,8 @@ module.exports = app => {
                     }
 
                     // Create a token
-                    const token = jwt.sign({ _id: user._id, username: user.username }, process.env.SECRET, {
+                    console.log(user)
+                    const token = jwt.sign({ _id: user._id, username: user.username, playerID: user.playerID }, process.env.SECRET, {
                         expiresIn: "60 days"
                     });
                     // Set a cookie and redirect to root
