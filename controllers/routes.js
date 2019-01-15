@@ -6,7 +6,7 @@ module.exports = app => {
     //Home Page
     app.get('/', (req, res) => {
         var currentUser = req.user;
-        console.log(currentUser.playerID)
+        console.log(currentUser)
         res.render("home.handlebars", { currentUser });
     });
 
@@ -63,6 +63,7 @@ module.exports = app => {
                         // Password does not match
                         return res.status(401).send({ message: "Wrong Username or password" });
                     }
+
                     // Create a token
                     const token = jwt.sign({ _id: user._id, username: user.username }, process.env.SECRET, {
                         expiresIn: "60 days"
@@ -101,7 +102,9 @@ module.exports = app => {
         requestMatchesHero(player,hero_id,item_name).then(data => {
             console.log(matchItemTime);
             console.log(matchWin);
-            let max = [Math.max(...matchItemTime)/timeInterval]
+            let max = Math.max(...matchItemTime)/timeInterval
+            console.log("max")
+            console.log(max+2)
             let matchData = [];
             for(let i = 0; i<max+1; i++){
                 matchData.push({
@@ -109,10 +112,13 @@ module.exports = app => {
                     "loses": 0
                 })
             }
+            console.log(matchData.length)
+            console.log(matchData)
             for(let index = 0; index<matchItemTime.length; index++){
                 if(matchWin[index] == 1){
                     matchData[Math.floor(matchItemTime[index]/timeInterval)+1].wins += 1;
                 } else {
+                    console.log((matchItemTime[index]/timeInterval)+1)
                     matchData[Math.floor(matchItemTime[index]/timeInterval)+1].loses += 1;
                 }
             }

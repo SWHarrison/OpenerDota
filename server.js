@@ -28,7 +28,6 @@ var exphbs = require('express-handlebars');
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
-module.exports = app
 
 var checkAuth = (req, res, next) => {
   console.log("Checking authentication");
@@ -44,7 +43,7 @@ var checkAuth = (req, res, next) => {
 };
 
 app.use(checkAuth);
-
+module.exports = app
 route(app)
 
 app.listen(process.env.PORT || '3000', () => {

@@ -65,7 +65,7 @@
                 let labelsToMake = json.matchData.length;
                 labels = [];
                 labels.push("no item")
-                for(let i = 0;i<labelsToMake;i++){
+                for(let i = 0;i<labelsToMake-1;i++){
                     let timeLow = i * 20;
                     let timeHigh = i * 20 + 19;
                     let minutes = Math.floor(timeLow/60)
@@ -77,10 +77,7 @@
                     wins.push(json.matchData[i].wins);
                     totals.push(json.matchData[i].wins+json.matchData[i].loses)
                 }
-                /*console.log("wins");
-                console.log(wins);
-                console.log("totals");
-                console.log(totals);
+
                 let flag = true;
                 let i = 1;
                 while(flag){
@@ -88,19 +85,10 @@
                         labels.splice(i,1);
                         wins.splice(i,1);
                         totals.splice(i,1);
-                        console.log("wins");
-                        console.log(wins);
-                        console.log("totals");
-                        console.log(totals);
                     } else {
                         flag = false;
                     }
                 }
-                console.log("over")
-                console.log("wins");
-                console.log(wins);
-                console.log("totals");
-                console.log(totals);*/
                 var ctx = document.getElementById("myChart");
                 var myChart = new Chart (ctx, {
                     type: 'bar',
