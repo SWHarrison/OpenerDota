@@ -1,16 +1,17 @@
 <!-- views/partials/navbar.handlebars -->
 
-<nav class="navbar navbar-default" style="display: flex; flex-direction: row; justify-content: space-between;">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/">
-                OpenerDota.js
-            </a>
+<nav class="navbar navbar-default">
+    <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">
+                    OpenerDota.js
+                </a>
+            </div>
         </div>
-    </div>
 
     <div class="container">
-        <div class="nav navbar-nav navbar-right" style="justify-content: flex-end;">
+        <div class="nav navbar-nav navbar-right" style="text-align: right;">
           {{#if currentUser}}
             <div><a href="/logout">Logout</a></div>
             <div>Signed-in as {{currentUser.username}}<div>
@@ -40,4 +41,6 @@
           {{/if}}
         </ul>
     </div>
+</div>
+
 </nav>

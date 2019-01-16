@@ -25,7 +25,7 @@ module.exports = app => {
         const user = new User(req.body);
         console.log(process.env.SECRET)
         user.save().then((user) => {
-            var token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: "60 days" });
+            var token = jwt.sign({ _id: user._id, username: user.username, playerID: user.playerID }, process.env.SECRET, { expiresIn: "60 days" });
             res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });
             res.redirect('/');
         })
@@ -149,12 +149,14 @@ module.exports = app => {
 
                     let firstPurchases = matchData.players[index].first_purchase_time;
                     console.log(firstPurchases)
-                    if(firstPurchases[item]){
-                        matchItemTime.push(firstPurchases[item]);
-                    } else {
-                        matchItemTime.push(0);
+                    if(firstPurchases){
+                        if(firstPurchases[item]){
+                            matchItemTime.push(firstPurchases[item]);
+                        } else {
+                            matchItemTime.push(0);
+                        }
+                        matchWin.push(matchData.players[index].win);
                     }
-                    matchWin.push(matchData.players[index].win);
                 }
                 return;
             })
